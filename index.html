@@ -10,8 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Karla:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
-    <a href="https://fanciful-mochi-226e46.netlify.app/">Open My Closet</a>
-
+    <a href="https://fanciful-mochi-226e46.netlify.app">Open My Closet</a>
     <style>
       :root {
         --ink: #332244;
@@ -353,6 +352,240 @@
         background: rgba(255, 255, 255, 0.5);
       }
 
+      /* ---------- PAGE 1 : PERSONA PICKER ---------- */
+      .page1 {
+        display: none;
+        min-height: 100vh;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+      }
+      .page1.active {
+        display: flex;
+      }
+
+      .page1-inner {
+        width: 100%;
+        max-width: 640px;
+        text-align: center;
+      }
+
+      .persona-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+        margin-top: 28px;
+      }
+
+      .persona-card {
+        background: var(--paper-solid);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 22px 12px;
+        cursor: pointer;
+        transition:
+          transform 140ms ease,
+          box-shadow 140ms ease,
+          border-color 140ms ease;
+        font-family: "Karla", sans-serif;
+      }
+      .persona-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 22px -12px rgba(51, 34, 68, 0.4);
+      }
+      .persona-card.active {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px var(--accent);
+      }
+      .persona-card .p-icon {
+        font-size: 30px;
+        display: block;
+        margin-bottom: 8px;
+      }
+      .persona-card .p-label {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .persona-custom {
+        max-width: 420px;
+        margin: 22px auto 0;
+        text-align: left;
+        display: none;
+      }
+      .persona-custom.active {
+        display: block;
+      }
+      .persona-custom label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11.5px;
+        opacity: 0.65;
+        display: block;
+        margin-bottom: 6px;
+      }
+      .persona-custom-row {
+        display: flex;
+        gap: 8px;
+      }
+      .persona-custom-row input {
+        flex: 1;
+        border-radius: 999px;
+        border: 1.5px solid rgba(51, 34, 68, 0.3);
+        padding: 11px 16px;
+        font-family: "Karla", sans-serif;
+        font-size: 14px;
+        background: var(--paper-solid);
+        color: var(--ink);
+      }
+      .persona-custom-row input:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+
+      /* ---------- PAGE 2 : LAYOUT + BUDGET ---------- */
+      .page2 {
+        display: none;
+        width: 100%;
+      }
+      .page2.active {
+        display: flex;
+        justify-content: center;
+      }
+
+      .page2-grid {
+        width: 100%;
+        max-width: 1280px;
+        display: grid;
+        grid-template-columns: minmax(0, 980px) 280px;
+        gap: 26px;
+        align-items: start;
+        justify-content: center;
+      }
+
+      .persona-back {
+        display: inline-block;
+        margin-bottom: 14px;
+        padding: 7px 16px;
+        font-size: 12px;
+      }
+
+      .budget-panel {
+        position: sticky;
+        top: 30px;
+        background: var(--paper);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        padding: 22px 20px 24px;
+      }
+
+      .budget-panel h2 {
+        font-family: "Fraunces", serif;
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0 0 8px;
+      }
+
+      .budget-hint {
+        font-size: 12px;
+        line-height: 1.55;
+        opacity: 0.7;
+        margin: 0 0 16px;
+      }
+
+      .budget-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        opacity: 0.65;
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .budget-input-row {
+        display: flex;
+        align-items: center;
+        border: 1.5px solid rgba(51, 34, 68, 0.3);
+        border-radius: 12px;
+        padding: 6px 12px;
+        margin-bottom: 18px;
+        background: var(--paper-solid);
+      }
+      .budget-input-row:focus-within {
+        border-color: var(--accent);
+      }
+      .budget-prefix {
+        font-family: "JetBrains Mono", monospace;
+        opacity: 0.6;
+        margin-right: 4px;
+      }
+      .budget-input-row input {
+        border: none;
+        outline: none;
+        background: transparent;
+        font-family: "Karla", sans-serif;
+        font-weight: 700;
+        font-size: 16px;
+        color: var(--ink);
+        width: 100%;
+        padding: 6px 0;
+      }
+
+      .budget-list {
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+        min-height: 40px;
+        margin-bottom: 14px;
+      }
+
+      .budget-empty {
+        font-size: 12px;
+        opacity: 0.55;
+        line-height: 1.5;
+        margin: 0;
+      }
+
+      .budget-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 12.5px;
+      }
+      .budget-row .b-name {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .budget-row .b-amt {
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 500;
+      }
+      .budget-row .b-amt.free {
+        opacity: 0.5;
+      }
+
+      .budget-total {
+        border-top: 1px solid var(--line);
+        padding-top: 12px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      @media (max-width: 980px) {
+        .page2-grid {
+          grid-template-columns: 1fr;
+          max-width: 980px;
+        }
+        .budget-panel {
+          position: static;
+        }
+      }
+
       /* ---------- RESULT MODAL ---------- */
       .veil {
         position: fixed;
@@ -534,51 +767,121 @@
     </style>
   </head>
   <body>
-    <div class="wrap">
-      <header>
-        <div class="eyebrow">an interactive sundial</div>
-        <h1>Build a <em>perfect day</em></h1>
+    <div class="page1" id="page1">
+      <div class="page1-inner">
+        <div class="eyebrow">before we begin</div>
+        <h1>Who's planning today?</h1>
         <p class="sub">
-          Drag seven moments onto the arc, from first light to last light. The
-          sky follows wherever you're working.
+          We'll shape the deck of moments around you — pick the closest fit, or
+          go custom.
         </p>
-      </header>
 
-      <div class="arc-region" id="arcRegion">
-        <svg class="arc-path" viewBox="0 0 980 230" preserveAspectRatio="none">
-          <path
-            id="arcLine"
-            d=""
-            fill="none"
-            stroke="rgba(51,34,68,0.25)"
-            stroke-width="1.5"
-            stroke-dasharray="2 8"
-            stroke-linecap="round"
-          />
-        </svg>
-        <div class="sun-token" id="sunToken">☀️</div>
-        <!-- slots injected here -->
-      </div>
+        <div class="persona-grid" id="personaGrid"></div>
 
-      <div class="deck-panel">
-        <div class="deck-head">
-          <h2>Moments</h2>
-          <span class="deck-hint" id="deckHint"
-            >Drag a card onto a slot on the arc — or tap a card, then tap a
-            slot.</span
+        <div class="persona-custom" id="personaCustom">
+          <label for="personaCustomInput"
+            >Describe yourself in a few words</label
           >
+          <div class="persona-custom-row">
+            <input
+              type="text"
+              id="personaCustomInput"
+              placeholder="e.g. new parent, night-shift nurse, traveller…"
+              maxlength="40"
+            />
+            <button class="btn-primary" id="personaCustomGo">Continue</button>
+          </div>
         </div>
-        <div class="deck-grid" id="deckGrid"></div>
       </div>
+    </div>
 
-      <div class="controls">
-        <button class="btn-ghost" id="resetBtn">Start over</button>
-        <button class="btn-primary" id="finishBtn" disabled>
-          Close out the day
-        </button>
+    <div class="page2" id="page2">
+      <div class="page2-grid">
+        <div class="wrap">
+          <header>
+            <button
+              class="btn-ghost persona-back"
+              id="personaBack"
+              type="button"
+            >
+              ← change who you are
+            </button>
+            <div class="eyebrow">an interactive sundial</div>
+            <h1>Build a <em>perfect day</em></h1>
+            <p class="sub">
+              Drag seven moments onto the arc, from first light to last light.
+              The sky follows wherever you're working.
+            </p>
+          </header>
+
+          <div class="arc-region" id="arcRegion">
+            <svg
+              class="arc-path"
+              viewBox="0 0 980 230"
+              preserveAspectRatio="none"
+            >
+              <path
+                id="arcLine"
+                d=""
+                fill="none"
+                stroke="rgba(51,34,68,0.25)"
+                stroke-width="1.5"
+                stroke-dasharray="2 8"
+                stroke-linecap="round"
+              />
+            </svg>
+            <div class="sun-token" id="sunToken">☀️</div>
+            <!-- slots injected here -->
+          </div>
+
+          <div class="deck-panel">
+            <div class="deck-head">
+              <h2>Moments</h2>
+              <span class="deck-hint" id="deckHint"
+                >Drag a card onto a slot on the arc — or tap a card, then tap a
+                slot.</span
+              >
+            </div>
+            <div class="deck-grid" id="deckGrid"></div>
+          </div>
+
+          <div class="controls">
+            <button class="btn-ghost" id="resetBtn">Start over</button>
+            <button class="btn-primary" id="finishBtn" disabled>
+              Close out the day
+            </button>
+          </div>
+
+          <footer>seven slots · dawn to night · no two days the same</footer>
+        </div>
+
+        <aside class="budget-panel" id="budgetPanel">
+          <h2>Day budget</h2>
+          <p class="budget-hint">
+            Enter what you'd like to spend today. We'll split it across whatever
+            you've placed on the arc, weighted by what each moment typically
+            costs.
+          </p>
+          <label for="budgetInput" class="budget-label">Total budget</label>
+          <div class="budget-input-row">
+            <span class="budget-prefix">$</span>
+            <input
+              type="number"
+              id="budgetInput"
+              min="0"
+              step="1"
+              placeholder="0"
+              inputmode="numeric"
+            />
+          </div>
+          <div class="budget-list" id="budgetList">
+            <p class="budget-empty">
+              Place a moment on the arc to start budgeting.
+            </p>
+          </div>
+          <div class="budget-total" id="budgetTotal"></div>
+        </aside>
       </div>
-
-      <footer>seven slots · dawn to night · no two days the same</footer>
     </div>
 
     <div class="veil" id="veil">
@@ -656,6 +959,8 @@
         ];
 
         // tags: energy, calm, joy, social  (0-2 each)
+        // personas: who this moment tends to suit ("other" persona always sees everything)
+        // cost: typical $ cost for one person to do this (0 = free) — used by the budget panel
         const ACTIVITIES = [
           {
             id: "a1",
@@ -663,6 +968,15 @@
             emoji: "🌅",
             ideal: ["dawn"],
             tags: { energy: 1, calm: 2, joy: 1, social: 0 },
+            cost: 0,
+            personas: [
+              "student",
+              "labour",
+              "entrepreneur",
+              "office",
+              "professor",
+              "senior",
+            ],
           },
           {
             id: "a2",
@@ -670,6 +984,15 @@
             emoji: "☕",
             ideal: ["dawn", "morning"],
             tags: { energy: 2, calm: 1, joy: 0, social: 0 },
+            cost: 6,
+            personas: [
+              "student",
+              "labour",
+              "entrepreneur",
+              "office",
+              "professor",
+              "senior",
+            ],
           },
           {
             id: "a3",
@@ -677,6 +1000,8 @@
             emoji: "📓",
             ideal: ["dawn", "night"],
             tags: { energy: 0, calm: 2, joy: 1, social: 0 },
+            cost: 0,
+            personas: ["student", "entrepreneur", "professor", "senior"],
           },
           {
             id: "a4",
@@ -684,6 +1009,8 @@
             emoji: "🧘",
             ideal: ["dawn", "morning"],
             tags: { energy: 1, calm: 2, joy: 0, social: 0 },
+            cost: 0,
+            personas: ["student", "office", "senior"],
           },
           {
             id: "a5",
@@ -691,6 +1018,14 @@
             emoji: "🧺",
             ideal: ["morning"],
             tags: { energy: 1, calm: 0, joy: 2, social: 2 },
+            cost: 20,
+            personas: [
+              "student",
+              "labour",
+              "entrepreneur",
+              "professor",
+              "senior",
+            ],
           },
           {
             id: "a6",
@@ -698,6 +1033,8 @@
             emoji: "💻",
             ideal: ["morning", "midday"],
             tags: { energy: 1, calm: 0, joy: 1, social: 0 },
+            cost: 0,
+            personas: ["student", "entrepreneur", "office", "professor"],
           },
           {
             id: "a7",
@@ -705,6 +1042,15 @@
             emoji: "🥪",
             ideal: ["midday"],
             tags: { energy: 0, calm: 1, joy: 2, social: 1 },
+            cost: 15,
+            personas: [
+              "student",
+              "labour",
+              "entrepreneur",
+              "office",
+              "professor",
+              "senior",
+            ],
           },
           {
             id: "a8",
@@ -712,6 +1058,8 @@
             emoji: "🏖️",
             ideal: ["midday", "afternoon"],
             tags: { energy: 2, calm: 1, joy: 2, social: 0 },
+            cost: 10,
+            personas: ["student", "labour", "entrepreneur", "senior"],
           },
           {
             id: "a9",
@@ -719,6 +1067,8 @@
             emoji: "😴",
             ideal: ["afternoon"],
             tags: { energy: 0, calm: 2, joy: 1, social: 0 },
+            cost: 0,
+            personas: ["student", "labour", "senior"],
           },
           {
             id: "a10",
@@ -726,6 +1076,8 @@
             emoji: "🚲",
             ideal: ["afternoon"],
             tags: { energy: 2, calm: 0, joy: 1, social: 0 },
+            cost: 5,
+            personas: ["student", "labour", "office"],
           },
           {
             id: "a11",
@@ -733,6 +1085,14 @@
             emoji: "👯",
             ideal: ["afternoon"],
             tags: { energy: 0, calm: 1, joy: 1, social: 2 },
+            cost: 12,
+            personas: [
+              "student",
+              "entrepreneur",
+              "office",
+              "professor",
+              "senior",
+            ],
           },
           {
             id: "a12",
@@ -740,6 +1100,15 @@
             emoji: "🌇",
             ideal: ["golden"],
             tags: { energy: 0, calm: 2, joy: 2, social: 0 },
+            cost: 0,
+            personas: [
+              "student",
+              "labour",
+              "entrepreneur",
+              "office",
+              "professor",
+              "senior",
+            ],
           },
           {
             id: "a13",
@@ -747,6 +1116,8 @@
             emoji: "🍽️",
             ideal: ["golden", "evening"],
             tags: { energy: 0, calm: 1, joy: 2, social: 2 },
+            cost: 60,
+            personas: ["entrepreneur", "office"],
           },
           {
             id: "a14",
@@ -754,6 +1125,8 @@
             emoji: "🎶",
             ideal: ["evening"],
             tags: { energy: 2, calm: 0, joy: 2, social: 1 },
+            cost: 35,
+            personas: ["student", "entrepreneur"],
           },
           {
             id: "a15",
@@ -761,6 +1134,8 @@
             emoji: "🎲",
             ideal: ["evening"],
             tags: { energy: 0, calm: 0, joy: 1, social: 2 },
+            cost: 10,
+            personas: ["student", "labour", "professor", "senior"],
           },
           {
             id: "a16",
@@ -768,6 +1143,15 @@
             emoji: "🌌",
             ideal: ["night"],
             tags: { energy: 0, calm: 2, joy: 1, social: 0 },
+            cost: 0,
+            personas: [
+              "student",
+              "labour",
+              "entrepreneur",
+              "office",
+              "professor",
+              "senior",
+            ],
           },
           {
             id: "a17",
@@ -775,6 +1159,8 @@
             emoji: "🎬",
             ideal: ["night"],
             tags: { energy: 0, calm: 1, joy: 1, social: 0 },
+            cost: 15,
+            personas: ["student", "labour", "office", "senior"],
           },
           {
             id: "a18",
@@ -782,11 +1168,25 @@
             emoji: "🛁",
             ideal: ["night"],
             tags: { energy: 0, calm: 2, joy: 0, social: 0 },
+            cost: 20,
+            personas: ["labour", "office", "senior"],
           },
         ];
 
         const IDEAL_BONUS = 3;
         const COMBO_BONUS = 1;
+
+        const PERSONAS = [
+          { id: "student", label: "Student", icon: "🎓" },
+          { id: "labour", label: "Labour / Worker", icon: "🛠️" },
+          { id: "entrepreneur", label: "Entrepreneur", icon: "💼" },
+          { id: "office", label: "Office Worker", icon: "🖥️" },
+          { id: "professor", label: "Professor / Teacher", icon: "📚" },
+          { id: "senior", label: "Senior Citizen", icon: "🌿" },
+          { id: "other", label: "Other / Custom", icon: "✍️" },
+        ];
+
+        let currentPersona = null; // set on page 1
 
         // ---------------- STATE ----------------
 
@@ -804,6 +1204,19 @@
         const finishBtn = document.getElementById("finishBtn");
         const resetBtn = document.getElementById("resetBtn");
         const deckHint = document.getElementById("deckHint");
+
+        const page1 = document.getElementById("page1");
+        const page2 = document.getElementById("page2");
+        const personaGrid = document.getElementById("personaGrid");
+        const personaCustom = document.getElementById("personaCustom");
+        const personaCustomInput =
+          document.getElementById("personaCustomInput");
+        const personaCustomGo = document.getElementById("personaCustomGo");
+        const personaBack = document.getElementById("personaBack");
+
+        const budgetInput = document.getElementById("budgetInput");
+        const budgetList = document.getElementById("budgetList");
+        const budgetTotal = document.getElementById("budgetTotal");
 
         const VIEW_W = 980,
           VIEW_H = 230;
@@ -867,9 +1280,15 @@
 
         // ---------------- BUILD DECK ----------------
 
+        function activitiesForPersona(personaId) {
+          if (!personaId || personaId === "other") return ACTIVITIES;
+          return ACTIVITIES.filter((a) => a.personas.includes(personaId));
+        }
+
         function buildDeck() {
           deckGrid.innerHTML = "";
-          ACTIVITIES.forEach((act) => {
+          const list = activitiesForPersona(currentPersona);
+          list.forEach((act) => {
             const card = document.createElement("div");
             card.className = "card";
             card.draggable = true;
@@ -887,6 +1306,67 @@
       `;
             deckGrid.appendChild(card);
           });
+        }
+
+        // ---------------- PAGE 1: PERSONA PICKER ----------------
+
+        function buildPersonaGrid() {
+          personaGrid.innerHTML = "";
+          PERSONAS.forEach((p) => {
+            const card = document.createElement("div");
+            card.className = "persona-card";
+            card.dataset.persona = p.id;
+            card.tabIndex = 0;
+            card.setAttribute("role", "button");
+            card.innerHTML = `<span class="p-icon">${p.icon}</span><span class="p-label">${p.label}</span>`;
+            personaGrid.appendChild(card);
+          });
+        }
+
+        function wirePersonaPage() {
+          personaGrid.addEventListener("click", (e) => {
+            const card = e.target.closest(".persona-card");
+            if (!card) return;
+            const id = card.dataset.persona;
+            personaGrid
+              .querySelectorAll(".persona-card")
+              .forEach((c) => c.classList.toggle("active", c === card));
+            if (id === "other") {
+              personaCustom.classList.add("active");
+              personaCustomInput.focus();
+              return;
+            }
+            personaCustom.classList.remove("active");
+            choosePersona(id);
+          });
+
+          personaGrid.addEventListener("keydown", (e) => {
+            if (e.key !== "Enter" && e.key !== " ") return;
+            const card = e.target.closest(".persona-card");
+            if (!card) return;
+            e.preventDefault();
+            card.click();
+          });
+
+          personaCustomGo.addEventListener("click", () =>
+            choosePersona("other"),
+          );
+          personaCustomInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") choosePersona("other");
+          });
+
+          personaBack.addEventListener("click", () => {
+            page2.classList.remove("active");
+            page1.classList.add("active");
+          });
+        }
+
+        function choosePersona(id) {
+          currentPersona = id;
+          buildDeck();
+          fullReset();
+          page1.classList.remove("active");
+          page2.classList.add("active");
         }
 
         // ---------------- SKY / SUN sync ----------------
@@ -959,6 +1439,7 @@
           selectedCardId = null;
           refreshDeckStates();
           refreshFinishButton();
+          renderBudgetSidebar();
         }
 
         function clearSlot(slotId) {
@@ -975,6 +1456,7 @@
           );
           refreshDeckStates();
           refreshFinishButton();
+          renderBudgetSidebar();
         }
 
         function wireDeckInteractions() {
@@ -1092,6 +1574,75 @@
           moveSunTo(slotIndex);
         }
 
+        // ---------------- BUDGET ----------------
+
+        function computeBudgetAllocations(totalBudget) {
+          const filled = SLOTS.map((s) => ({
+            slot: s,
+            act: placement[s.id],
+          })).filter((x) => x.act);
+          const allocations = {}; // slotId -> amount
+          if (filled.length === 0 || !totalBudget || totalBudget <= 0)
+            return allocations;
+
+          const costSum = filled.reduce((sum, x) => sum + x.act.cost, 0);
+
+          if (costSum === 0) {
+            // everything picked is free — hand each moment an even, flexible share
+            const even = totalBudget / filled.length;
+            filled.forEach((x) => (allocations[x.slot.id] = even));
+            return allocations;
+          }
+
+          filled.forEach((x) => {
+            allocations[x.slot.id] = totalBudget * (x.act.cost / costSum);
+          });
+          return allocations;
+        }
+
+        function renderBudgetSidebar() {
+          const totalBudget = Number(budgetInput.value) || 0;
+          const filled = SLOTS.map((s) => ({
+            slot: s,
+            act: placement[s.id],
+          })).filter((x) => x.act);
+
+          if (filled.length === 0) {
+            budgetList.innerHTML =
+              '<p class="budget-empty">Place a moment on the arc to start budgeting.</p>';
+            budgetTotal.textContent = "";
+            return;
+          }
+
+          if (!totalBudget || totalBudget <= 0) {
+            budgetList.innerHTML = filled
+              .map(
+                (x) =>
+                  `<div class="budget-row"><span class="b-name">${x.act.emoji} ${x.act.name}</span><span class="b-amt free">${x.act.cost === 0 ? "free" : "$" + x.act.cost + " typ."}</span></div>`,
+              )
+              .join("");
+            budgetTotal.textContent =
+              "Enter a budget above to split it across these.";
+            return;
+          }
+
+          const allocations = computeBudgetAllocations(totalBudget);
+          budgetList.innerHTML = filled
+            .map((x) => {
+              const amt = allocations[x.slot.id] || 0;
+              return `<div class="budget-row"><span class="b-name">${x.act.emoji} ${x.act.name}</span><span class="b-amt">$${amt.toFixed(0)}</span></div>`;
+            })
+            .join("");
+
+          const assigned = Object.values(allocations).reduce(
+            (a, b) => a + b,
+            0,
+          );
+          budgetTotal.innerHTML = `<span>Assigned</span><span>$${assigned.toFixed(0)} of $${totalBudget}</span>`;
+        }
+
+        budgetInput.addEventListener("input", renderBudgetSidebar);
+
         // ---------------- SCORING ----------------
 
         function computeResult() {
@@ -1182,11 +1733,19 @@
             meterRow.appendChild(row);
           });
 
+          const totalBudget = Number(budgetInput.value) || 0;
+          const allocations =
+            totalBudget > 0 ? computeBudgetAllocations(totalBudget) : {};
+
           recap.innerHTML = lines
-            .map(
-              (l) =>
-                `<div><b>${l.slot.time}</b>${l.act.emoji} ${l.act.name}${l.idealHit ? ' <span style="opacity:.55">— perfect timing</span>' : ""}</div>`,
-            )
+            .map((l) => {
+              const amt = allocations[l.slot.id];
+              const budgetBit =
+                amt !== undefined
+                  ? ` <span style="opacity:.55">— $${amt.toFixed(0)}</span>`
+                  : "";
+              return `<div><b>${l.slot.time}</b>${l.act.emoji} ${l.act.name}${l.idealHit ? ' <span style="opacity:.55">— perfect timing</span>' : ""}${budgetBit}</div>`;
+            })
             .join("");
 
           veil.classList.add("show");
@@ -1200,13 +1759,19 @@
         }
 
         function buildShareText(score, totals, lines) {
+          const totalBudget = Number(budgetInput.value) || 0;
+          const allocations =
+            totalBudget > 0 ? computeBudgetAllocations(totalBudget) : {};
           const header = `${titleFor(totals)} — ${score} pts\n`;
           const body = lines
-            .map(
-              (l) => `${l.slot.time.padEnd(10)} ${l.act.emoji} ${l.act.name}`,
-            )
+            .map((l) => {
+              const amt = allocations[l.slot.id];
+              const budgetBit = amt !== undefined ? `  $${amt.toFixed(0)}` : "";
+              return `${l.slot.time.padEnd(10)} ${l.act.emoji} ${l.act.name}${budgetBit}`;
+            })
             .join("\n");
-          return header + body;
+          const footer = totalBudget > 0 ? `\n\nBudget: $${totalBudget}` : "";
+          return header + body + footer;
         }
 
         document
@@ -1248,6 +1813,7 @@
           refreshDeckStates();
           refreshFinishButton();
           defaultSky();
+          renderBudgetSidebar();
         }
 
         resetBtn.addEventListener("click", fullReset);
@@ -1256,11 +1822,15 @@
 
         arcLine.setAttribute("d", buildArcPathD());
         buildSlots();
-        buildDeck();
         wireDeckInteractions();
         wireSlotInteractions();
         defaultSky();
         refreshFinishButton();
+        renderBudgetSidebar();
+
+        buildPersonaGrid();
+        wirePersonaPage();
+        page1.classList.add("active");
       })();
     </script>
   </body>

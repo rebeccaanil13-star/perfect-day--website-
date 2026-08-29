@@ -1,0 +1,1269 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perfect Day — build one, hour by hour</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Karla:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <a href="https://fanciful-mochi-226e46.netlify.app/" target="_blank"
+      >Create your outfit of the day</a
+    >
+
+    <style>
+      :root {
+        --ink: #332244;
+        --paper: rgba(255, 255, 255, 0.72);
+        --paper-solid: #fffaf3;
+        --accent: #ff6b4a;
+        --line: rgba(51, 34, 68, 0.16);
+
+        /* sky stops — updated live via JS */
+        --sky-a: #ffd9b3;
+        --sky-b: #a8d8ea;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Karla", sans-serif;
+        color: var(--ink);
+      }
+
+      body {
+        background: linear-gradient(180deg, var(--sky-a) 0%, var(--sky-b) 100%);
+        transition: background 1100ms cubic-bezier(0.22, 0.61, 0.36, 1);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 20px 80px;
+        overflow-x: hidden;
+      }
+
+      .wrap {
+        width: 100%;
+        max-width: 980px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 8px;
+      }
+
+      .eyebrow {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        opacity: 0.65;
+      }
+
+      h1 {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: clamp(34px, 6vw, 58px);
+        margin: 6px 0 10px;
+        line-height: 1.02;
+      }
+
+      h1 em {
+        font-style: italic;
+        font-weight: 400;
+        color: var(--accent);
+      }
+
+      .sub {
+        font-size: 15px;
+        max-width: 520px;
+        margin: 0 auto 6px;
+        opacity: 0.82;
+        line-height: 1.5;
+      }
+
+      /* ---------- THE ARC ---------- */
+      .arc-region {
+        position: relative;
+        width: 100%;
+        height: 230px;
+        margin: 18px 0 6px;
+      }
+
+      svg.arc-path {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .sun-token {
+        position: absolute;
+        width: 34px;
+        height: 34px;
+        transform: translate(-50%, -50%);
+        font-size: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        filter: drop-shadow(0 4px 10px rgba(255, 140, 80, 0.55));
+        transition:
+          left 500ms cubic-bezier(0.22, 0.61, 0.36, 1),
+          top 500ms cubic-bezier(0.22, 0.61, 0.36, 1);
+        pointer-events: none;
+        z-index: 5;
+      }
+
+      .slot {
+        position: absolute;
+        width: 104px;
+        transform: translate(-50%, -50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .slot .slot-time {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.04em;
+        opacity: 0.65;
+      }
+
+      .slot-drop {
+        width: 84px;
+        height: 84px;
+        border-radius: 20px;
+        border: 1.5px dashed rgba(51, 34, 68, 0.35);
+        background: rgba(255, 255, 255, 0.4);
+        backdrop-filter: blur(6px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        cursor: pointer;
+        transition:
+          transform 160ms ease,
+          border-color 160ms ease,
+          background 160ms ease,
+          box-shadow 160ms ease;
+        position: relative;
+      }
+
+      .slot-drop:hover,
+      .slot-drop.hovering {
+        transform: scale(1.06);
+        border-color: var(--accent);
+        background: rgba(255, 255, 255, 0.65);
+      }
+
+      .slot-drop.filled {
+        border-style: solid;
+        border-color: rgba(51, 34, 68, 0.22);
+        background: var(--paper-solid);
+        box-shadow: 0 10px 24px -12px rgba(51, 34, 68, 0.4);
+      }
+
+      .slot-drop.filled.pop {
+        animation: pop 320ms ease;
+      }
+      @keyframes pop {
+        0% {
+          transform: scale(0.7);
+        }
+        60% {
+          transform: scale(1.12);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .slot-drop .clear-x {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--ink);
+        color: #fff;
+        font-size: 12px;
+        line-height: 20px;
+        text-align: center;
+        cursor: pointer;
+        opacity: 0;
+        transform: scale(0.6);
+        transition:
+          opacity 140ms ease,
+          transform 140ms ease;
+      }
+      .slot-drop.filled:hover .clear-x {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .slot-label {
+        font-family: "Fraunces", serif;
+        font-size: 12.5px;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      /* ---------- DECK ---------- */
+
+      .deck-panel {
+        margin-top: 26px;
+        background: var(--paper);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        padding: 22px 22px 26px;
+      }
+
+      .deck-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .deck-head h2 {
+        font-family: "Fraunces", serif;
+        font-size: 19px;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .deck-hint {
+        font-size: 12.5px;
+        opacity: 0.65;
+      }
+
+      .deck-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+        gap: 10px;
+      }
+
+      .card {
+        background: var(--paper-solid);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px 10px;
+        text-align: center;
+        cursor: grab;
+        user-select: none;
+        transition:
+          transform 140ms ease,
+          box-shadow 140ms ease,
+          opacity 140ms ease;
+        position: relative;
+      }
+
+      .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px -10px rgba(51, 34, 68, 0.35);
+      }
+
+      .card.used {
+        opacity: 0.28;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+
+      .card.selected {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      .card .emoji {
+        font-size: 26px;
+        display: block;
+        margin-bottom: 6px;
+      }
+      .card .name {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 13px;
+        line-height: 1.2;
+      }
+      .card .ideal {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 9.5px;
+        opacity: 0.55;
+        margin-top: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      /* ---------- CONTROLS ---------- */
+      .controls {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        font-family: "Karla", sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        border-radius: 999px;
+        padding: 13px 26px;
+        border: none;
+        cursor: pointer;
+        transition:
+          transform 140ms ease,
+          box-shadow 140ms ease,
+          opacity 140ms ease;
+      }
+      button:active {
+        transform: scale(0.96);
+      }
+
+      .btn-primary {
+        background: var(--ink);
+        color: #fffaf3;
+      }
+      .btn-primary:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+      .btn-primary:not(:disabled):hover {
+        box-shadow: 0 10px 22px -8px rgba(51, 34, 68, 0.55);
+      }
+
+      .btn-ghost {
+        background: transparent;
+        color: var(--ink);
+        border: 1.5px solid rgba(51, 34, 68, 0.3);
+      }
+      .btn-ghost:hover {
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      /* ---------- RESULT MODAL ---------- */
+      .veil {
+        position: fixed;
+        inset: 0;
+        background: rgba(30, 20, 40, 0.45);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 50;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 260ms ease;
+      }
+      .veil.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .result-card {
+        width: 100%;
+        max-width: 520px;
+        background: var(--paper-solid);
+        border-radius: 26px;
+        padding: 34px 30px 28px;
+        text-align: center;
+        transform: translateY(16px) scale(0.97);
+        transition: transform 320ms cubic-bezier(0.22, 0.61, 0.36, 1);
+        max-height: 88vh;
+        overflow-y: auto;
+      }
+      .veil.show .result-card {
+        transform: translateY(0) scale(1);
+      }
+
+      .result-strip {
+        display: flex;
+        height: 34px;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 18px;
+        box-shadow: inset 0 0 0 1px rgba(51, 34, 68, 0.15);
+      }
+      .result-strip div {
+        flex: 1;
+      }
+
+      .result-card .eyebrow {
+        opacity: 0.5;
+      }
+
+      .result-card h2 {
+        font-family: "Fraunces", serif;
+        font-style: italic;
+        font-weight: 500;
+        font-size: 28px;
+        margin: 6px 0 4px;
+      }
+
+      .score-line {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        opacity: 0.7;
+        margin-bottom: 18px;
+      }
+      .score-line b {
+        color: var(--accent);
+        font-size: 15px;
+      }
+
+      .meter-row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        text-align: left;
+        margin: 0 auto 22px;
+        max-width: 360px;
+      }
+
+      .meter {
+        display: grid;
+        grid-template-columns: 62px 1fr 30px;
+        align-items: center;
+        gap: 10px;
+        font-size: 12px;
+      }
+
+      .meter .track {
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(51, 34, 68, 0.1);
+        overflow: hidden;
+      }
+      .meter .fill {
+        height: 100%;
+        border-radius: 999px;
+        background: var(--accent);
+        width: 0%;
+        transition: width 700ms cubic-bezier(0.22, 0.61, 0.36, 1);
+      }
+
+      .recap {
+        text-align: left;
+        font-size: 13px;
+        line-height: 1.9;
+        border-top: 1px solid var(--line);
+        padding-top: 14px;
+        margin-bottom: 20px;
+      }
+      .recap b {
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 500;
+        font-size: 11px;
+        opacity: 0.55;
+        display: inline-block;
+        width: 72px;
+      }
+
+      .result-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      footer {
+        margin-top: 34px;
+        font-size: 11.5px;
+        opacity: 0.5;
+        text-align: center;
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      @media (max-width: 640px) {
+        .arc-region {
+          height: auto;
+        }
+        svg.arc-path {
+          display: none;
+        }
+        .sun-token {
+          display: none;
+        }
+        .slot {
+          position: static;
+          transform: none;
+          width: 100%;
+          flex-direction: row;
+          justify-content: flex-start;
+          gap: 14px;
+          padding: 8px 4px;
+        }
+        .slot-drop {
+          width: 58px;
+          height: 58px;
+          font-size: 22px;
+          flex-shrink: 0;
+        }
+        .slot-label {
+          text-align: left;
+        }
+        .slot .slot-time {
+          order: -1;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+        }
+      }
+
+      :focus-visible {
+        outline: 2.5px solid var(--accent);
+        outline-offset: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="eyebrow">an interactive sundial</div>
+        <h1>Build a <em>perfect day</em></h1>
+        <p class="sub">
+          Drag seven moments onto the arc, from first light to last light. The
+          sky follows wherever you're working.
+        </p>
+      </header>
+
+      <div class="arc-region" id="arcRegion">
+        <svg class="arc-path" viewBox="0 0 980 230" preserveAspectRatio="none">
+          <path
+            id="arcLine"
+            d=""
+            fill="none"
+            stroke="rgba(51,34,68,0.25)"
+            stroke-width="1.5"
+            stroke-dasharray="2 8"
+            stroke-linecap="round"
+          />
+        </svg>
+        <div class="sun-token" id="sunToken">☀️</div>
+        <!-- slots injected here -->
+      </div>
+
+      <div class="deck-panel">
+        <div class="deck-head">
+          <h2>Moments</h2>
+          <span class="deck-hint" id="deckHint"
+            >Drag a card onto a slot on the arc — or tap a card, then tap a
+            slot.</span
+          >
+        </div>
+        <div class="deck-grid" id="deckGrid"></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn-ghost" id="resetBtn">Start over</button>
+        <button class="btn-primary" id="finishBtn" disabled>
+          Close out the day
+        </button>
+      </div>
+
+      <footer>seven slots · dawn to night · no two days the same</footer>
+    </div>
+
+    <div class="veil" id="veil">
+      <div class="result-card">
+        <div class="result-strip" id="resultStrip"></div>
+        <div class="eyebrow">your day, in full</div>
+        <h2 id="resultTitle">—</h2>
+        <div class="score-line">day score — <b id="resultScore">0</b> pts</div>
+
+        <div class="meter-row" id="meterRow"></div>
+
+        <div class="recap" id="recap"></div>
+
+        <div class="result-actions">
+          <button class="btn-ghost" id="copyBtn">Copy summary</button>
+          <button class="btn-primary" id="againBtn">Build another</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        // ---------------- DATA ----------------
+
+        const SLOTS = [
+          {
+            id: "dawn",
+            label: "Dawn",
+            time: "6–9am",
+            sky: ["#FFE3C4", "#FFB6A3"],
+            icon: "🌅",
+          },
+          {
+            id: "morning",
+            label: "Morning",
+            time: "9–12pm",
+            sky: ["#FFE8B8", "#A8D8EA"],
+            icon: "🌤️",
+          },
+          {
+            id: "midday",
+            label: "Midday",
+            time: "12–3pm",
+            sky: ["#8FD0F0", "#EAF6FF"],
+            icon: "☀️",
+          },
+          {
+            id: "afternoon",
+            label: "Afternoon",
+            time: "3–6pm",
+            sky: ["#A8D8EA", "#FFD59A"],
+            icon: "🌥️",
+          },
+          {
+            id: "golden",
+            label: "Golden Hour",
+            time: "6–8pm",
+            sky: ["#FF9A56", "#FF6B9D"],
+            icon: "🌇",
+          },
+          {
+            id: "evening",
+            label: "Evening",
+            time: "8–10pm",
+            sky: ["#9D6B9D", "#3E2C63"],
+            icon: "🌆",
+          },
+          {
+            id: "night",
+            label: "Night",
+            time: "10pm–1am",
+            sky: ["#241542", "#0F0A24"],
+            icon: "🌌",
+          },
+        ];
+
+        // tags: energy, calm, joy, social  (0-2 each)
+        const ACTIVITIES = [
+          {
+            id: "a1",
+            name: "Sunrise walk",
+            emoji: "🌅",
+            ideal: ["dawn"],
+            tags: { energy: 1, calm: 2, joy: 1, social: 0 },
+          },
+          {
+            id: "a2",
+            name: "Slow coffee ritual",
+            emoji: "☕",
+            ideal: ["dawn", "morning"],
+            tags: { energy: 2, calm: 1, joy: 0, social: 0 },
+          },
+          {
+            id: "a3",
+            name: "Journaling",
+            emoji: "📓",
+            ideal: ["dawn", "night"],
+            tags: { energy: 0, calm: 2, joy: 1, social: 0 },
+          },
+          {
+            id: "a4",
+            name: "Yoga & stretch",
+            emoji: "🧘",
+            ideal: ["dawn", "morning"],
+            tags: { energy: 1, calm: 2, joy: 0, social: 0 },
+          },
+          {
+            id: "a5",
+            name: "Farmers market",
+            emoji: "🧺",
+            ideal: ["morning"],
+            tags: { energy: 1, calm: 0, joy: 2, social: 2 },
+          },
+          {
+            id: "a6",
+            name: "Deep work session",
+            emoji: "💻",
+            ideal: ["morning", "midday"],
+            tags: { energy: 1, calm: 0, joy: 1, social: 0 },
+          },
+          {
+            id: "a7",
+            name: "Picnic lunch",
+            emoji: "🥪",
+            ideal: ["midday"],
+            tags: { energy: 0, calm: 1, joy: 2, social: 1 },
+          },
+          {
+            id: "a8",
+            name: "Swim or beach",
+            emoji: "🏖️",
+            ideal: ["midday", "afternoon"],
+            tags: { energy: 2, calm: 1, joy: 2, social: 0 },
+          },
+          {
+            id: "a9",
+            name: "Nap in the sun",
+            emoji: "😴",
+            ideal: ["afternoon"],
+            tags: { energy: 0, calm: 2, joy: 1, social: 0 },
+          },
+          {
+            id: "a10",
+            name: "Bike ride",
+            emoji: "🚲",
+            ideal: ["afternoon"],
+            tags: { energy: 2, calm: 0, joy: 1, social: 0 },
+          },
+          {
+            id: "a11",
+            name: "Coffee with a friend",
+            emoji: "👯",
+            ideal: ["afternoon"],
+            tags: { energy: 0, calm: 1, joy: 1, social: 2 },
+          },
+          {
+            id: "a12",
+            name: "Watch the sunset",
+            emoji: "🌇",
+            ideal: ["golden"],
+            tags: { energy: 0, calm: 2, joy: 2, social: 0 },
+          },
+          {
+            id: "a13",
+            name: "Rooftop dinner",
+            emoji: "🍽️",
+            ideal: ["golden", "evening"],
+            tags: { energy: 0, calm: 1, joy: 2, social: 2 },
+          },
+          {
+            id: "a14",
+            name: "Live music & dancing",
+            emoji: "🎶",
+            ideal: ["evening"],
+            tags: { energy: 2, calm: 0, joy: 2, social: 1 },
+          },
+          {
+            id: "a15",
+            name: "Board games",
+            emoji: "🎲",
+            ideal: ["evening"],
+            tags: { energy: 0, calm: 0, joy: 1, social: 2 },
+          },
+          {
+            id: "a16",
+            name: "Stargazing",
+            emoji: "🌌",
+            ideal: ["night"],
+            tags: { energy: 0, calm: 2, joy: 1, social: 0 },
+          },
+          {
+            id: "a17",
+            name: "Cozy movie night",
+            emoji: "🎬",
+            ideal: ["night"],
+            tags: { energy: 0, calm: 1, joy: 1, social: 0 },
+          },
+          {
+            id: "a18",
+            name: "Bath & skincare",
+            emoji: "🛁",
+            ideal: ["night"],
+            tags: { energy: 0, calm: 2, joy: 0, social: 0 },
+          },
+        ];
+
+        const IDEAL_BONUS = 3;
+        const COMBO_BONUS = 1;
+
+        // ---------------- STATE ----------------
+
+        // slotId -> activity object (or null)
+        const placement = {};
+        SLOTS.forEach((s) => (placement[s.id] = null));
+
+        let selectedCardId = null; // for tap-to-place on mobile / accessibility
+
+        // ---------------- DOM refs ----------------
+        const arcRegion = document.getElementById("arcRegion");
+        const sunToken = document.getElementById("sunToken");
+        const arcLine = document.getElementById("arcLine");
+        const deckGrid = document.getElementById("deckGrid");
+        const finishBtn = document.getElementById("finishBtn");
+        const resetBtn = document.getElementById("resetBtn");
+        const deckHint = document.getElementById("deckHint");
+
+        const VIEW_W = 980,
+          VIEW_H = 230;
+
+        function arcPoint(t) {
+          // t in [0,1] across the arc. Arc dips like a rainbow (sun rises, peaks, sets).
+          const x = 70 + t * (VIEW_W - 140);
+          const y = 170 - Math.sin(t * Math.PI) * 130;
+          return { x, y };
+        }
+
+        function buildArcPathD() {
+          let d = "";
+          for (let i = 0; i <= 40; i++) {
+            const t = i / 40;
+            const p = arcPoint(t);
+            d +=
+              (i === 0 ? "M" : "L") +
+              p.x.toFixed(1) +
+              " " +
+              p.y.toFixed(1) +
+              " ";
+          }
+          return d;
+        }
+
+        function pctToViewBoxPct(p) {
+          return {
+            left: (p.x / VIEW_W) * 100 + "%",
+            top: (p.y / VIEW_H) * 100 + "%",
+          };
+        }
+
+        // ---------------- BUILD SLOTS ----------------
+
+        function buildSlots() {
+          SLOTS.forEach((slot, i) => {
+            const t = (i + 0.5) / SLOTS.length;
+            const p = arcPoint(t);
+            const pos = pctToViewBoxPct(p);
+
+            const el = document.createElement("div");
+            el.className = "slot";
+            el.style.left = pos.left;
+            el.style.top = pos.top;
+            el.dataset.slotId = slot.id;
+
+            el.innerHTML = `
+        <div class="slot-time">${slot.time}</div>
+        <div class="slot-drop" tabindex="0" role="button"
+             aria-label="${slot.label}, ${slot.time}. Empty. Activate to place selected card."
+             data-slot="${slot.id}">
+          <span class="slot-emoji">${slot.icon}</span>
+          <span class="clear-x" title="Remove">✕</span>
+        </div>
+        <div class="slot-label">${slot.label}</div>
+      `;
+            arcRegion.appendChild(el);
+          });
+        }
+
+        // ---------------- BUILD DECK ----------------
+
+        function buildDeck() {
+          deckGrid.innerHTML = "";
+          ACTIVITIES.forEach((act) => {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.draggable = true;
+            card.dataset.actId = act.id;
+            card.tabIndex = 0;
+            card.setAttribute("role", "button");
+            const idealLabel = act.ideal
+              .map((id) => SLOTS.find((s) => s.id === id).label)
+              .join(" / ");
+            card.setAttribute("aria-label", `${act.name}, best ${idealLabel}`);
+            card.innerHTML = `
+        <span class="emoji">${act.emoji}</span>
+        <div class="name">${act.name}</div>
+        <div class="ideal">${idealLabel}</div>
+      `;
+            deckGrid.appendChild(card);
+          });
+        }
+
+        // ---------------- SKY / SUN sync ----------------
+
+        function setSky(colors, animate = true) {
+          document.documentElement.style.setProperty("--sky-a", colors[0]);
+          document.documentElement.style.setProperty("--sky-b", colors[1]);
+        }
+
+        function moveSunTo(slotIndexFloat) {
+          const t = (slotIndexFloat + 0.5) / SLOTS.length;
+          const p = arcPoint(t);
+          const pos = pctToViewBoxPct(p);
+          sunToken.style.left = pos.left;
+          sunToken.style.top = pos.top;
+        }
+
+        function defaultSky() {
+          // blend of dawn->night average, calm neutral resting sky
+          setSky(["#FFE3C4", "#A8D8EA"]);
+          // rest sun at dawn
+          moveSunTo(0);
+        }
+
+        // ---------------- INTERACTION ----------------
+
+        function isUsed(actId) {
+          return Object.values(placement).some((a) => a && a.id === actId);
+        }
+
+        function refreshDeckStates() {
+          deckGrid.querySelectorAll(".card").forEach((card) => {
+            const used = isUsed(card.dataset.actId);
+            card.classList.toggle("used", used);
+            card.classList.toggle(
+              "selected",
+              card.dataset.actId === selectedCardId,
+            );
+          });
+        }
+
+        function refreshFinishButton() {
+          const filledCount = Object.values(placement).filter(Boolean).length;
+          finishBtn.disabled = filledCount < SLOTS.length;
+          finishBtn.textContent =
+            filledCount < SLOTS.length
+              ? `Close out the day (${filledCount}/${SLOTS.length})`
+              : "Close out the day";
+        }
+
+        function placeActivity(slotId, actId) {
+          const act = ACTIVITIES.find((a) => a.id === actId);
+          if (!act) return;
+          if (isUsed(actId)) return; // already placed elsewhere
+
+          placement[slotId] = act;
+          const dropEl = arcRegion.querySelector(
+            `.slot-drop[data-slot="${slotId}"]`,
+          );
+          dropEl.classList.add("filled");
+          dropEl.querySelector(".slot-emoji").textContent = act.emoji;
+          dropEl.setAttribute(
+            "aria-label",
+            `${SLOTS.find((s) => s.id === slotId).label}. Holds ${act.name}. Activate to remove.`,
+          );
+          dropEl.classList.remove("pop");
+          void dropEl.offsetWidth; // reflow to restart animation
+          dropEl.classList.add("pop");
+
+          selectedCardId = null;
+          refreshDeckStates();
+          refreshFinishButton();
+        }
+
+        function clearSlot(slotId) {
+          placement[slotId] = null;
+          const slot = SLOTS.find((s) => s.id === slotId);
+          const dropEl = arcRegion.querySelector(
+            `.slot-drop[data-slot="${slotId}"]`,
+          );
+          dropEl.classList.remove("filled");
+          dropEl.querySelector(".slot-emoji").textContent = slot.icon;
+          dropEl.setAttribute(
+            "aria-label",
+            `${slot.label}, ${slot.time}. Empty. Activate to place selected card.`,
+          );
+          refreshDeckStates();
+          refreshFinishButton();
+        }
+
+        function wireDeckInteractions() {
+          deckGrid.addEventListener("dragstart", (e) => {
+            const card = e.target.closest(".card");
+            if (!card || card.classList.contains("used")) return;
+            e.dataTransfer.setData("text/plain", card.dataset.actId);
+            e.dataTransfer.effectAllowed = "move";
+          });
+
+          deckGrid.addEventListener("click", (e) => {
+            const card = e.target.closest(".card");
+            if (!card || card.classList.contains("used")) return;
+            selectedCardId =
+              selectedCardId === card.dataset.actId ? null : card.dataset.actId;
+            refreshDeckStates();
+            deckHint.textContent = selectedCardId
+              ? `Selected "${ACTIVITIES.find((a) => a.id === selectedCardId).name}" — now tap a slot on the arc.`
+              : "Drag a card onto a slot on the arc — or tap a card, then tap a slot.";
+          });
+
+          deckGrid.addEventListener("keydown", (e) => {
+            if (e.key !== "Enter" && e.key !== " ") return;
+            const card = e.target.closest(".card");
+            if (!card) return;
+            e.preventDefault();
+            card.click();
+          });
+        }
+
+        function wireSlotInteractions() {
+          arcRegion.addEventListener("dragover", (e) => {
+            const drop = e.target.closest(".slot-drop");
+            if (!drop) return;
+            e.preventDefault();
+            drop.classList.add("hovering");
+            const slotIndex = SLOTS.findIndex(
+              (s) => s.id === drop.dataset.slot,
+            );
+            previewSky(slotIndex);
+          });
+
+          arcRegion.addEventListener("dragleave", (e) => {
+            const drop = e.target.closest(".slot-drop");
+            if (drop) drop.classList.remove("hovering");
+          });
+
+          arcRegion.addEventListener("drop", (e) => {
+            const drop = e.target.closest(".slot-drop");
+            if (!drop) return;
+            e.preventDefault();
+            drop.classList.remove("hovering");
+            const actId = e.dataTransfer.getData("text/plain");
+            if (placement[drop.dataset.slot]) return; // slot occupied
+            placeActivity(drop.dataset.slot, actId);
+          });
+
+          arcRegion.addEventListener("mouseover", (e) => {
+            const drop = e.target.closest(".slot-drop");
+            if (!drop) return;
+            const slotIndex = SLOTS.findIndex(
+              (s) => s.id === drop.dataset.slot,
+            );
+            previewSky(slotIndex);
+          });
+
+          arcRegion.addEventListener("mouseleave", () => defaultSky());
+
+          arcRegion.addEventListener("click", (e) => {
+            const clearX = e.target.closest(".clear-x");
+            const drop = e.target.closest(".slot-drop");
+            if (clearX && drop) {
+              e.stopPropagation();
+              if (placement[drop.dataset.slot]) clearSlot(drop.dataset.slot);
+              return;
+            }
+            if (!drop) return;
+            const slotId = drop.dataset.slot;
+            if (placement[slotId]) {
+              // tapping a filled slot with nothing selected does nothing extra (use the X)
+              return;
+            }
+            if (selectedCardId) {
+              placeActivity(slotId, selectedCardId);
+            }
+          });
+
+          arcRegion.addEventListener("keydown", (e) => {
+            const drop = e.target.closest(".slot-drop");
+            if (!drop) return;
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              drop.click();
+            }
+            const slotIndex = SLOTS.findIndex(
+              (s) => s.id === drop.dataset.slot,
+            );
+            previewSky(slotIndex);
+          });
+
+          arcRegion.addEventListener("focusin", (e) => {
+            const drop = e.target.closest(".slot-drop");
+            if (!drop) return;
+            const slotIndex = SLOTS.findIndex(
+              (s) => s.id === drop.dataset.slot,
+            );
+            previewSky(slotIndex);
+          });
+          arcRegion.addEventListener("focusout", () => defaultSky());
+        }
+
+        function previewSky(slotIndex) {
+          if (slotIndex < 0) return;
+          setSky(SLOTS[slotIndex].sky);
+          moveSunTo(slotIndex);
+        }
+
+        // ---------------- SCORING ----------------
+
+        function computeResult() {
+          let score = 0;
+          const totals = { energy: 0, calm: 0, joy: 0, social: 0 };
+          const lines = [];
+
+          SLOTS.forEach((slot, i) => {
+            const act = placement[slot.id];
+            if (!act) return;
+            let pts =
+              act.tags.energy + act.tags.calm + act.tags.joy + act.tags.social;
+            let idealHit = act.ideal.includes(slot.id);
+            if (idealHit) pts += IDEAL_BONUS;
+
+            totals.energy += act.tags.energy;
+            totals.calm += act.tags.calm;
+            totals.joy += act.tags.joy;
+            totals.social += act.tags.social;
+
+            lines.push({ slot, act, idealHit });
+            score += pts;
+          });
+
+          // adjacency combo: consecutive slots sharing a dominant tag
+          for (let i = 0; i < SLOTS.length - 1; i++) {
+            const a = placement[SLOTS[i].id],
+              b = placement[SLOTS[i + 1].id];
+            if (!a || !b) continue;
+            const sharedTag = ["energy", "calm", "joy", "social"].find(
+              (tag) => a.tags[tag] >= 1 && b.tags[tag] >= 1,
+            );
+            if (sharedTag) score += COMBO_BONUS;
+          }
+
+          return { score, totals, lines };
+        }
+
+        function titleFor(totals) {
+          const entries = Object.entries(totals).sort((a, b) => b[1] - a[1]);
+          const top = entries[0][0];
+          const titles = {
+            energy: "A Wide-Awake Day",
+            calm: "A Deeply Unhurried Day",
+            joy: "A Full-Hearted Day",
+            social: "A Day Made of Company",
+          };
+          return titles[top] || "A Perfectly Balanced Day";
+        }
+
+        // ---------------- RESULT MODAL ----------------
+
+        const veil = document.getElementById("veil");
+        const resultStrip = document.getElementById("resultStrip");
+        const resultTitle = document.getElementById("resultTitle");
+        const resultScore = document.getElementById("resultScore");
+        const meterRow = document.getElementById("meterRow");
+        const recap = document.getElementById("recap");
+
+        function showResult() {
+          const { score, totals, lines } = computeResult();
+
+          resultStrip.innerHTML = "";
+          SLOTS.forEach((s) => {
+            const seg = document.createElement("div");
+            seg.style.background = `linear-gradient(180deg, ${s.sky[0]}, ${s.sky[1]})`;
+            resultStrip.appendChild(seg);
+          });
+
+          resultTitle.textContent = titleFor(totals);
+          resultScore.textContent = score;
+
+          const maxPossiblePerMeter = SLOTS.length * 2; // rough ceiling for bar scale
+          meterRow.innerHTML = "";
+          [
+            ["Energy", "energy"],
+            ["Calm", "calm"],
+            ["Joy", "joy"],
+            ["Social", "social"],
+          ].forEach(([label, key]) => {
+            const pct = Math.min(
+              100,
+              Math.round((totals[key] / maxPossiblePerMeter) * 100),
+            );
+            const row = document.createElement("div");
+            row.className = "meter";
+            row.innerHTML = `<span>${label}</span><span class="track"><span class="fill" style="width:0%" data-w="${pct}"></span></span><span>${totals[key]}</span>`;
+            meterRow.appendChild(row);
+          });
+
+          recap.innerHTML = lines
+            .map(
+              (l) =>
+                `<div><b>${l.slot.time}</b>${l.act.emoji} ${l.act.name}${l.idealHit ? ' <span style="opacity:.55">— perfect timing</span>' : ""}</div>`,
+            )
+            .join("");
+
+          veil.classList.add("show");
+          requestAnimationFrame(() => {
+            meterRow.querySelectorAll(".fill").forEach((f) => {
+              f.style.width = f.dataset.w + "%";
+            });
+          });
+
+          window.__lastSummary = buildShareText(score, totals, lines);
+        }
+
+        function buildShareText(score, totals, lines) {
+          const header = `${titleFor(totals)} — ${score} pts\n`;
+          const body = lines
+            .map(
+              (l) => `${l.slot.time.padEnd(10)} ${l.act.emoji} ${l.act.name}`,
+            )
+            .join("\n");
+          return header + body;
+        }
+
+        document
+          .getElementById("finishBtn")
+          .addEventListener("click", showResult);
+        document.getElementById("againBtn").addEventListener("click", () => {
+          veil.classList.remove("show");
+          fullReset();
+        });
+        document
+          .getElementById("copyBtn")
+          .addEventListener("click", async () => {
+            const btn = document.getElementById("copyBtn");
+            try {
+              await navigator.clipboard.writeText(window.__lastSummary || "");
+              btn.textContent = "Copied ✓";
+            } catch (e) {
+              btn.textContent = "Copy failed";
+            }
+            setTimeout(() => (btn.textContent = "Copy summary"), 1600);
+          });
+
+        // ---------------- RESET ----------------
+
+        function fullReset() {
+          SLOTS.forEach((s) => {
+            placement[s.id] = null;
+          });
+          arcRegion.querySelectorAll(".slot-drop").forEach((drop) => {
+            const slot = SLOTS.find((s) => s.id === drop.dataset.slot);
+            drop.classList.remove("filled");
+            drop.querySelector(".slot-emoji").textContent = slot.icon;
+            drop.setAttribute(
+              "aria-label",
+              `${slot.label}, ${slot.time}. Empty. Activate to place selected card.`,
+            );
+          });
+          selectedCardId = null;
+          refreshDeckStates();
+          refreshFinishButton();
+          defaultSky();
+        }
+
+        resetBtn.addEventListener("click", fullReset);
+
+        // ---------------- INIT ----------------
+
+        arcLine.setAttribute("d", buildArcPathD());
+        buildSlots();
+        buildDeck();
+        wireDeckInteractions();
+        wireSlotInteractions();
+        defaultSky();
+        refreshFinishButton();
+      })();
+    </script>
+  </body>
+</html>
